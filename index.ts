@@ -1,5 +1,5 @@
 import { zip, of, from } from 'rxjs';
-import { map, tap, scan, delay, switchMap, flatMap, share, reduce } from 'rxjs/operators';
+import { map, tap, scan, delay, switchMap, flatMap, share, reduce, concatMap } from 'rxjs/operators';
 
 let age$ = of<number>(27, 25, 29);
 let name$ = of<string>('Foo', 'Bar', 'Beer');
@@ -17,15 +17,15 @@ var t = from(arr);
 
 zip(
   t.pipe(
-    delay(1000),
     scan((g, v) => {;
-      return g.pipe(
-        flatMap(x => of(v)),
-        tap((f) => console.log('here ' + f))
-      );
-    }, of({})),
-    share(),
-    switchMap(x => x)
+        return g.pipe(
+          flatMap(x => of(v)),
+          tap((f) => console.log('here ' + f))
+        );
+      
+      }, of({})
+    ),
+    concatMap(x => x)
   ),
 ).subscribe(value => {
   console.log(value);
