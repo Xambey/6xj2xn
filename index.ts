@@ -1,5 +1,5 @@
-import { zip, of, from } from 'rxjs';
-import { map, tap, scan, delay, switchMap, flatMap, share, reduce, concatMap } from 'rxjs/operators';
+import { zip, of, from, combineLatest, merge, concat, forkJoin } from 'rxjs';
+import { map, tap, scan, delay, switchMap, flatMap, share, reduce, concatMap, combineAll, mergeAll } from 'rxjs/operators';
 
 let age$ = of<number>(27, 25, 29);
 let name$ = of<string>('Foo', 'Bar', 'Beer');
@@ -15,7 +15,7 @@ let isDev$ = of<boolean>(true, true, false);
 var dtos = [1, 2, 3, 4];
 var t = from(dtos);
 
-zip(
+forkJoin(
   // t.pipe(
   //   concatMap(x => of(x)),
   //   scan((g, v) => {;
@@ -30,8 +30,8 @@ zip(
   // ),
   ...dtos.map(x => of(x).pipe(
     tap(dto => console.log('dto ' + dto)),
-    flatMap(x => {
-      const system_actions = from(["one action", "two action"]);
+    switchMap(x => {
+      const system_actions = from(["one action", "two action", "three action"]);
       return zip(
         system_actions.pipe(
           tap(f => 'before scan ' + f),
@@ -56,7 +56,7 @@ zip(
   tap(v => console.log('last pipe ')),
 )
 .subscribe(value => {
-  console.log(value);
+  console.log(`Subscribe: ${JSON.stringify(value)}`);
 })
 
 // outputs
