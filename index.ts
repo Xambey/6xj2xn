@@ -30,7 +30,7 @@ forkJoin(
   // ),
   dtos.map(x => of(x).pipe(
     tap(dto => console.log('dto ' + dto)),
-    switchMap(x => {
+    flatMap(x => {
       const system_actions = from(["one action", "two action", "three action"]);
       return zip(
         system_actions.pipe(
@@ -46,14 +46,13 @@ forkJoin(
           )),
           switchMap(x => x)
         )
+      ).pipe(
+        switchMap(x => x),
+        tap(v => console.log(`after zip: ${JSON.stringify(v)}`))
       )
-    }),
-    flatMap(x => x)
+    })
   ),
   )
-)
-.pipe(
-  tap(v => console.log('last pipe ')),
 )
 .subscribe(value => {
   console.log(`Subscribe: ${JSON.stringify(value)}`);
