@@ -31,18 +31,20 @@ zip(
   ...dtos.map(x => of(x).pipe(
     tap(dto => console.log('dto ' + dto)),
     flatMap(x => {
-      const system_actions = from([5,6]);
+      const system_actions = from(["one action", "two action"]);
       return zip(
         system_actions.pipe(
           tap(f => 'before scan ' + f),
-          scan((g, v) => {;
+          switchMap(x => of(x).pipe(
+            scan((g, v) => {;
             return g.pipe(
-              flatMap(x => of(v)),
-              tap((f) => console.log('system action ' + f))
-            );
-           }, of({})
-          ),
-          flatMap(x => x)
+                flatMap(x => of(v)),
+                tap((f) => console.log('system action - ' + f))
+              );
+            }, of({})
+            )
+          )),
+          switchMap(x => x)
         )
       )
     }),
@@ -52,7 +54,6 @@ zip(
 )
 .pipe(
   tap(v => console.log('last pipe ')),
-  tap(v => console.log(v)),
 )
 .subscribe(value => {
   console.log(value);
