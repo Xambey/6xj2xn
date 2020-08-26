@@ -32,7 +32,7 @@ forkJoin(
     tap(dto => console.log('dto ' + dto)),
     flatMap(x => {
       const system_actions = from(["one action", "two action", "three action"]);
-      return zip(
+      return forkJoin(
         system_actions.pipe(
           tap(f => 'before scan ' + f),
           switchMap(x => of(x).pipe(
