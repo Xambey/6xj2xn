@@ -12,8 +12,8 @@ let isDev$ = of<boolean>(true, true, false);
 // )
 // .subscribe(x => console.log(x));
 
-var arr = [1, 2, 3, 4];
-var t = from(arr);
+var dtos = [1, 2, 3, 4];
+var t = from(dtos);
 
 zip(
   // t.pipe(
@@ -28,17 +28,17 @@ zip(
   //   ),
   //   concatMap(x => x)
   // ),
-  ...arr.map(x => of(x).pipe(
-
+  ...dtos.map(x => of(x).pipe(
+    tap(dto => console.log('dto ' + dto)),
     flatMap(x => {
-      const arr2 = from([5,6]);
+      const system_actions = from([5,6]);
       return zip(
-        arr2.pipe(
-          tap(f => 'here arr2 before scan ' + f),
+        system_actions.pipe(
+          tap(f => 'before scan ' + f),
           scan((g, v) => {;
             return g.pipe(
               flatMap(x => of(v)),
-              tap((f) => console.log('here arr 2' + f))
+              tap((f) => console.log('system action ' + f))
             );
            }, of({})
           ),
