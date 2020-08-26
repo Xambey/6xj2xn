@@ -15,7 +15,8 @@ let isDev$ = of<boolean>(true, true, false);
 var dtos = [1, 2, 3, 4];
 var t = from(dtos);
 
-forkJoin(
+//Сливаем список дто для отправки
+merge(
   // t.pipe(
   //   concatMap(x => of(x)),
   //   scan((g, v) => {;
@@ -28,23 +29,25 @@ forkJoin(
   //   ),
   //   concatMap(x => x)
   // ),
-  dtos.map(x => of(x).pipe(
+  ...dtos.map(x => of(x).pipe(
     tap(dto => console.log('dto ' + dto)),
     flatMap(x => {
       const system_actions = from(["one action", "two action", "three action"]);
+      //  Список действий над DTO
       return forkJoin(
         system_actions.pipe(
-          tap(f => 'before scan ' + f),
           switchMap(x => of(x).pipe(
             scan((g, v) => {;
+            //  Кешируемая последовательность системных действий (запросов к API)
             return g.pipe(
                 flatMap(x => of(v)),
                 tap((f) => console.log('system action - ' + f))
               );
             }, of({})
+            //Поток закрывается по выходу из switchMap
             )
           )),
-          switchMap(x => x)
+          switchMap(x => x) //  Ожидаем выполнение предыдущего обсервера
         )
       ).pipe(
         switchMap(x => x),
@@ -52,7 +55,8 @@ forkJoin(
       )
     })
   ),
-  )
+  ),
+  5 // 5 потоков одновременно
 )
 .subscribe(value => {
   console.log(`Subscribe: ${JSON.stringify(value)}`);
