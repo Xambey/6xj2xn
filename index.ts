@@ -28,7 +28,7 @@ forkJoin(
   //   ),
   //   concatMap(x => x)
   // ),
-  ...dtos.map(x => of(x).pipe(
+  dtos.map(x => of(x).pipe(
     tap(dto => console.log('dto ' + dto)),
     switchMap(x => {
       const system_actions = from(["one action", "two action", "three action"]);
